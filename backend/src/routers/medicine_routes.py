@@ -32,7 +32,7 @@ def get_medicine_by_id(medicine_id: int, db: Session = Depends(get_db)):
     return med
 
 #PUT /medicines/{medicine_id}
-@router.put("/{medicine_id}")
+@router.patch("/{medicine_id}")
 def update_medicine(medicine_id: int, medicine: MedicineUpdate, db: Session = Depends(get_db)):
     print(f"Received update request for medicine_id={medicine_id}: {medicine.model_dump(exclude_unset=True)}")  # Debug print
     med = medicine_repo.update_medicine(db, medicine_id, medicine)
