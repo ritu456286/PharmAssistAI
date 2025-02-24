@@ -1,4 +1,4 @@
-from backend.src.configs.gemini_chat_config import get_gemini_model
+from src.configs.gemini_chat_config import get_gemini_model
 
 class PharmaChatService:
     def __init__(self):

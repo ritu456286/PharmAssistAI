@@ -44,6 +44,7 @@ def check_medicine_availability(prescription_text: str, db: Session):
             alternatives = find_similar_medicines(med)  # Get top 3 alternatives from ChromaDB
             available_alternatives = []
             for alt in alternatives:
+
                 db_alt_list = medicine_repo.get_medicine_by_name(db, alt["name"])
                 
                 # Check if any alternative dosage is available
@@ -52,7 +53,7 @@ def check_medicine_availability(prescription_text: str, db: Session):
                         {
                             "id": db_alt.id,
                             "quantity": db_alt.quantity,
-                            "strength": db_alt.strength
+                            "strength": db_alt.dosage
                         }
                         for db_alt in db_alt_list if db_alt.quantity > 0
                     ]

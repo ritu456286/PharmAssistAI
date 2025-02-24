@@ -1,5 +1,5 @@
 from mock_medicine_data import MOCK_MEDICINES
-from chromadb_conn import medicine_collection
+from src.vector_db.chromadb_conn import medicine_collection
 
 def add_mock_medicines():
     """

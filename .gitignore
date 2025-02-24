@@ -1,3 +1,8 @@
 venv/
 .env
 __pycache__/
+*.pyc
+
+backend/src/db/chroma_db/
+backend/src/db/chromadb/
+Ollama_OCR/
