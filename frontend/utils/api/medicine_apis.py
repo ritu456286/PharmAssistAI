@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 
-BASE_URL = "http://127.0.0.1:8000/api/medicines"  # Adjust if running on a different port
+BASE_URL = "http://127.0.0.1:8000/"  + "api/medicines" # Adjust if running on a different port
 
 def add_medicine(name: str, dosage: str, quantity: int, price: float, expiry_date: str):
     """

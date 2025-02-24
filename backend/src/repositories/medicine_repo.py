@@ -38,3 +38,6 @@ def delete_medicine(db: Session, medicine_id: int):
     db.delete(med)
     db.commit()
     return med
+
+def get_medicine_by_name(db: Session, medicine_name: str):
+    return db.query(Medicine).filter(Medicine.name == medicine_name).all()
