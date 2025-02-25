@@ -15,7 +15,7 @@ This AI-powered assistant helps pharmacists automate prescription processing, me
 ---
 
 ## 🏗 Architecture  
-![Architecture Diagram](https://drive.google.com/file/d/1ywM1kPvfPlL-6w1I1WNmkirHv4dEmQpg/view?usp=sharing)  
+![Architecture Diagram]("/diagrams/ggh-pharmassisitai.drawio (2).png")  
 
 ### 🔧 Technologies Used  
 #### **Backend:**  
