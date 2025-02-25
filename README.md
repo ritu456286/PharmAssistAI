@@ -16,7 +16,7 @@ This AI-powered assistant helps pharmacists automate prescription processing, me
 
 ## 🏗 Architecture  
 ![Architecture Diagram]("/diagrams/ggh-pharmassisitai.drawio (2).png")  
-
+<img src="/diagrams/ggh-pharmassisitai.drawio (2).png" alt="Alt Text" width="500">
 ### 🔧 Technologies Used  
 #### **Backend:**  
 - FastAPI – Handles prescription processing, medicine lookup, and API integrations.  
