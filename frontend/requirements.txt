@@ -9,3 +9,4 @@ tqdm
 opencv-python
 pdf2image
 numpy
+python-dotenv

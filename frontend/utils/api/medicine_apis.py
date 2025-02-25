@@ -1,7 +1,10 @@
 import requests
 import streamlit as st
+from dotenv import load_dotenv
 
-BASE_URL = "http://127.0.0.1:8000/"  + "api/medicines" # Adjust if running on a different port
+load_dotenv()
+
+BASE_URL = os.getenv("BASE_URL") + "api/medicines" # Adjust if running on a different port
 
 def add_medicine(name: str, dosage: str, quantity: int, price: float, expiry_date: str):
     """

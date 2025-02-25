@@ -8,10 +8,13 @@ import concurrent.futures
 from pathlib import Path
 import cv2
 from pdf2image import convert_from_path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class OCRProcessor:
     def __init__(self, model_name: str = "llama3.2-vision:11b", 
-                 base_url: str = "http://localhost:11434/api/generate", #ollama serve url, currently use it locally
+                 base_url: str = os.getenv("OLLAMA_URL") or "http://localhost:11434/api/generate", #ollama serve url, currently use it locally
                  max_workers: int = 1):
         
         self.model_name = model_name

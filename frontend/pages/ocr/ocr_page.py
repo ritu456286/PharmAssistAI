@@ -11,9 +11,12 @@ import sys
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from ocr_processor import OCRProcessor
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-BASE_URL_LLM =  "http://127.0.0.1:8000/"  # Replace with actual API
+BASE_URL_LLM =  os.getenv("BASE_URL") or "http://127.0.0.1:8000/"  # Replace with actual API
 
 def get_available_models():
     return ["llava:7b", "llama3.2-vision:11b"]
