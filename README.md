@@ -76,8 +76,8 @@ For more information, pls visit: https://ollama.com/library/llava:7b
 ## **Setting up the project**
 - To setup this project in your device, first clone this repository using:
 ```
-git clone : 
-cd /PharmAssistAI
+git clone https://github.com/ritu456286/PharmAssistAI.git
+cd ./PharmAssistAI
 ```
 1. Let's set up the Backend. Go inside backend folder.
 - Create a python virtual environment
