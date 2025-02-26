@@ -104,6 +104,12 @@ GEMINI_API_KEY= <your gemini-2.0 api key>
 - Create an empty folder inside /src named `db` --> /src/db. Here the Sqlite and chromaDB will be stored.
 - Setup for backend is complete, you can run the fastapi server now, by executing the following command:
 ```
+- Seed the chroma DB with mock data for testing, later you can replace with real-world medicine data.
+```
+cd backend/src/vector_db
+python seeds.py
+```
+
 run.sh
 ```
 
