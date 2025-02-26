@@ -23,6 +23,7 @@ def get_available_models():
 
 # Define preset prompts
 PRESET_PROMPTS = {
+    #TODO: Complete backend service to get insights from Medical Lab Report
     "Medical Lab Report": (
         "The uploaded image is a **medical laboratory report**. Extract all relevant details, "
         "including test names, chemical compounds, values, reference ranges, and any "
@@ -182,8 +183,8 @@ def app():
                                 mime="text/plain"
                             )
                             ## TESTING FOR ONLY TEXT DATA
-                            if st.button("🤖 Get Insights"):
-                                with st.spinner("Generating insights..."):
+                            if st.button("🤖 Check availability of medicines"):
+                                with st.spinner("Checking..."):
                             
                                     get_insights_url = BASE_URL_LLM
                                     response = requests.post(get_insights_url, json={"text": result})
@@ -193,6 +194,7 @@ def app():
                                     st.markdown(insights.get("summary", "No insights available."))
 
                         else:
+                            #TODO: CHeck availability in batch images case
                             # Batch processing
                             results = processor.process_batch(
                                 input_path=image_paths,
