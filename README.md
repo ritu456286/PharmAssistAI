@@ -1,5 +1,14 @@
 # PharmAssistAI
 
+## 📽️ DEMO VIDEOS  
+
+🔹 **[OCR Demo](https://youtu.be/U_z6CGe6b1k)** – Watch how the OCR Scanner extracts text effortlessly!  
+
+🔹 **[Project Demo](https://youtu.be/zUKhJ-bkMR4)** – Get an overview of the project in action!  
+
+> 🚧 **Note:** This project is still in development. More features and improvements are on the way! Stay tuned! 🚀 
+----
+
 ## Overview  
 This AI-powered assistant helps pharmacists automate prescription processing, medicine identification, and also efficiently manage inventory. It also provides reliable alternative medicine suggestions if medicines demanded are not available in the current stock and provide herbal remedy recommendations from trusted sources, ensuring pharmacists can assist customers more efficiently while maintaining trust.  
 
