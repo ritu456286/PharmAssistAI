@@ -11,7 +11,7 @@ def index_medicine(medicine_name: str, metadata: dict):
     )
 
     
-def find_similar_medicines(medicine_name: str, top_k=3):
+def find_similar_medicines(medicine_name: str, top_k=4):
     """
     Finds top_k similar medicines based on vector similarity.
     Excludes the queried medicine from the results.

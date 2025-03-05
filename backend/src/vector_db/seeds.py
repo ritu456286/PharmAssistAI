@@ -12,7 +12,7 @@ def add_mock_medicines():
             ids=[med["id"]],
             documents=[med["name"]],  # Main search key
             metadatas=[{
-                "composition": med["composition"],
+                "composition": ", ".join(med["composition"]),
                 "symptoms": ", ".join(med["symptoms"]),
                 "manufacturer": med["manufacturer"],
                 "form": med["form"]

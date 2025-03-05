@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from src.models.db.medicine import Medicine
 from src.models.schema.medicine import MedicineCreate, MedicineUpdate
+from datetime import date
+
 
 def create_medicine(db: Session, medicine: MedicineCreate):
     med = Medicine(**medicine.model_dump()) # unpacking the dictionary to orm model
@@ -41,3 +43,19 @@ def delete_medicine(db: Session, medicine_id: int):
 
 def get_medicine_by_name(db: Session, medicine_name: str):
     return db.query(Medicine).filter(Medicine.name == medicine_name).all()
+
+def get_medicine_by_name_and_dosage(db: Session, 
+medicine_name: str, dosage: str):
+    """
+        Return a list of matched medicines by name and dosages, a list because, they might have been purchased in batches, with different prices or expiry_date
+    """
+    return db.query(Medicine).filter(
+        Medicine.name == medicine_name,
+        Medicine.dosage.ilike(dosage)  # Case insensitive search
+    ).all()
+
+def get_expired_or_unavailable_medicines(db: Session):
+    "Returns medicines that should be deleted, expired or unavailable"
+    return db.query(Medicine).filter(
+            (Medicine.expiry_date < date.today()) | (Medicine.quantity == 0)
+        ).all()
