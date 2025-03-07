@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.repositories import medicine_repo
 from src.configs.db_con import SessionLocal
 from src.models.schema.medicine import MedicineCreate, MedicineUpdate
-from src.services.medicine_service import check_medicine_availability, cleanup_expired_medicines
+from src.services.medicine_service import check_medicine_availability
 import logging
 
 router = APIRouter()
@@ -45,15 +45,15 @@ def check_availability_endpoint(prescription_text: str, db: Session = Depends(ge
     return check_medicine_availability(prescription_text, db)
 
 
-#GET /medicines/cleanup -> manually run when hosted to clean expired or 0 quantity medicines
-@router.get("/cleanup")
-def trigger_cleanup():
-    try:
-        cleanup_expired_medicines()
-        return {"message": "Cleanup triggered successfully"}
-    except Exception as e:
-            logging.error(f"[API ERROR] {e}")
-            raise HTTPException(status_code=500, detail=str(e))
+# #GET /medicines/cleanup -> manually run when hosted to clean expired or 0 quantity medicines
+# @router.get("/cleanup")
+# def trigger_cleanup():
+#     try:
+#         cleanup_expired_medicines()
+#         return {"message": "Cleanup triggered successfully"}
+#     except Exception as e:
+#             logging.error(f"[API ERROR] {e}")
+#             raise HTTPException(status_code=500, detail=str(e))
     
 
 #GET /medicines/{medicine_name}

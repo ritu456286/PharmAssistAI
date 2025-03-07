@@ -12,6 +12,7 @@ async def chat_with_pharma(user_input: dict):
             raise HTTPException(status_code=400, detail="Message is required.")
 
         response = pharma_chat_service.chat_with_pharma_assistant(user_message)
+        
         return {"response": response}
     
     except Exception as e:
