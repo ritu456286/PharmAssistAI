@@ -6,4 +6,7 @@ backend/src/db/
 backend/src/db/pharmacy.db
 backend/src/db/chroma_db/
 backend/src/db/chromadb/
+backend/src/logs/
 Ollama_OCR/
+# Ignore logs directory
+*.log

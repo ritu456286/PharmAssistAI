@@ -1,10 +1,6 @@
 import requests
 import streamlit as st
-from dotenv import load_dotenv
-import os
-load_dotenv()
-
-BASE_URL = os.getenv("BASE_URL") + "api/medicine" # Adjust if running on a different port
+from utils.api.api_config import MEDICINE_ROUTES as BASE_URL
 
 def add_medicine(name: str, dosage: str, quantity: int, price: float, expiry_date: str):
     """
@@ -83,3 +79,40 @@ def update_medicine(medicine_id: int, updated_data: dict):
     except requests.exceptions.RequestException as e:
         st.error(f"Server Connection Error: {e}")
         return False
+
+def check_availabilty(prescription_text):
+    # TODO : test the code
+    """
+    Sends prescription text to the backend API to check medicine availability.
+    """
+    print("PRESCRIPTION TEXT RECEIVED: " + prescription_text)
+    url = f"{BASE_URL}/check-availability"  # Ensure endpoint is correct
+    payload = {"prescription_text": prescription_text}
+    print("URL:"  + url)
+    try:
+        print(f"Sending prescription: {payload}")
+        response = requests.post(url, json=payload)
+
+        if response.status_code == 200:
+            st.success("✅ Medicine availability checked successfully.")
+            print("Response from Backend:", response.json())
+            return True
+        else:
+            st.error(f"❌ Failed to check availability: {response.status_code} - {response.json().get('detail', 'Unknown error')}")
+            return False
+    except requests.exceptions.RequestException as e:
+        st.error(f"🚫 Server Connection Error: {e}")
+        return False
+
+
+def get_medicines_below_threshold():
+    try:
+        response = requests.get(f"{BASE_URL}/below-threshold")
+        if response.status_code == 200:
+            return response.json().get("medicines", [])
+        else:
+            return []
+    except Exception as e:
+        print(f"[ERROR] Fetching below-threshold medicines: {e}")
+        return []
+    

@@ -2,13 +2,18 @@ from sqlalchemy.orm import Session
 from src.models.db.medicine import Medicine
 from src.models.schema.medicine import MedicineCreate, MedicineUpdate
 from datetime import date
-
-
+from src.models.db.alert import StockAlert
+from src.repositories import alert_repo
+## Creating a new medicine
 def create_medicine(db: Session, medicine: MedicineCreate):
     med = Medicine(**medicine.model_dump()) # unpacking the dictionary to orm model
     db.add(med)
     db.commit()
     db.refresh(med)
+
+    # Automatically Create Default Alert
+    alert_repo.create_alert(db, med.id)
+
     return med
 
 
@@ -30,9 +35,15 @@ def update_medicine(db: Session, medicine_id: int, medicine: MedicineUpdate):
    
     db.commit()
     db.refresh(med)
+
+    # Trigger alert check after update
+    from src.services.alert_service import trigger_alert_if_needed
+   
+    trigger_alert_if_needed(db, medicine_id)
+    
     return med
 
-
+#DELETE complete medicine row data by id
 def delete_medicine(db: Session, medicine_id: int):
     med = db.query(Medicine).filter(Medicine.id == medicine_id).first()
     if not med:
@@ -54,8 +65,23 @@ medicine_name: str, dosage: str):
         Medicine.dosage.ilike(dosage)  # Case insensitive search
     ).all()
 
+
 def get_expired_or_unavailable_medicines(db: Session):
     "Returns medicines that should be deleted, expired or unavailable"
     return db.query(Medicine).filter(
             (Medicine.expiry_date < date.today()) | (Medicine.quantity == 0)
         ).all()
+
+def get_medicines_below_threshold(db: Session):
+    "Returns medicines that have a quantity less than or equal to the alert quantity in stock alerts table"
+    result = (
+        db.query(Medicine)
+        .join(StockAlert, Medicine.id == StockAlert.medicine_id)
+        .filter(
+            
+            Medicine.quantity <= StockAlert.alert_quantity,
+            
+        )
+        .all()
+    )
+    return result

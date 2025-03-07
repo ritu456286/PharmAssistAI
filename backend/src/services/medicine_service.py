@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from src.configs.db_con import SessionLocal
 from src.repositories import medicine_repo
-from src.utils.text_cleaning import extract_medicines_and_dosages
+from src.utils.text_cleaning import extract_medicines
+# from src.utils.send_email import send_email
 from src.vector_db.chromadb_client import find_similar_medicines
 import logging
 
@@ -13,8 +14,8 @@ def find_alternatives(unavailable_medicines: list, db: Session) -> dict:
     """
     alternative_medicines = {}
     if unavailable_medicines:
-        for med in unavailable_medicines:
-            alternatives = find_similar_medicines(med["name"])  # Get top k alternatives from ChromaDB
+        for med_name in unavailable_medicines:
+            alternatives = find_similar_medicines(med_name)  # Get top k alternatives from ChromaDB
             available_alternatives = []
             for alt_med_name in alternatives:
                 medicines_found_list = medicine_repo.get_medicine_by_name(db, alt_med_name["name"])
@@ -29,7 +30,7 @@ def find_alternatives(unavailable_medicines: list, db: Session) -> dict:
                             "price": alt_med.price
                         })
                 if available_alternatives:
-                    alternative_medicines[med["name"]] = available_alternatives[:5] 
+                    alternative_medicines[med_name] = available_alternatives[:5] 
         return alternative_medicines
 
 
@@ -40,9 +41,10 @@ def check_medicine_availability(prescription_text: str, db: Session):
     3. If unavailable, query ChromaDB for top 3 alternatives.
     4. Only return alternatives that are in stock.
     """
-    medicine_data = extract_medicines_and_dosages(prescription_text)
+    # medicine_data = extract_medicines_and_dosages(prescription_text)
+    medicines_list = extract_medicines(prescription_text)
 
-    if not medicine_data:
+    if not medicines_list:
         raise HTTPException(status_code=400, detail="No valid medicines found.")
 
     available_medicines = []
@@ -51,31 +53,17 @@ def check_medicine_availability(prescription_text: str, db: Session):
     # Iterate medicines with zip_longest to handle missing dosages
     from itertools import zip_longest
 
-    for med_data in medicine_data:
-        if med_data["dosage"]:  # If dosage is present
-            db_med_list = medicine_repo.get_medicine_by_name_and_dosage(db, med_data["name"], med_data["dosage"])
-            print("HELLO TO DB_MED__LIST")
-            print(db_med_list)
-    
-        else:  # If dosage is missing due to OCR error or in general, check only by name and find all dosages
-            
-            db_med_list = medicine_repo.get_medicine_by_name(db, med_data["name"])
-
-            print("HELLO TO DB_MED__LIST")
-            print(db_med_list)
-    
+    for med_name in medicines_list:
+        db_med_list = medicine_repo.get_medicine_by_name(db, med_name)
         if db_med_list:
-            available_medicines.extend(db_med_list)  # Append all matched medicines
+            available_medicines.extend(db_med_list)  
         else:
-            unavailable_medicines.append({
-                "name": med_data["name"],
-                "dosage": med_data["dosage"] if med_data["dosage"] else None
-            })
+            unavailable_medicines.append(med_name)
     if unavailable_medicines:
         alternative_medicines = find_alternatives(unavailable_medicines, db)
 
     return {
-        "extracted_medicines": medicine_data,
+        "extracted_medicines": medicines_list,
         "available": available_medicines,
         "unavailable": unavailable_medicines,
         "alternatives": alternative_medicines
@@ -101,3 +89,26 @@ def cleanup_expired_medicines():
     finally:
         db.close()
         logging.info("[CLEANUP] Database connection closed")
+
+# async def send_inventory_warning():
+#     db: Session = SessionLocal() 
+#     threshold = 5  # Set your threshold for quantity
+#     try:
+#         medicines = medicine_repo.get_medicines_below_threshold(db, threshold)
+        
+#         if medicines:
+#             # Format the list of medicines below threshold
+#             medicine_list = "\n".join([f"{med.name} - {med.quantity}" for med in medicines])
+#             subject = "Inventory Warning: Medicines Below Threshold"
+#             body = f"Hello,\n\nThe following medicines in your inventory are below the threshold of {threshold}:\n\n{medicine_list}\n\nPlease restock soon!"
+#         else:
+#             subject = "Inventory Check: No Medicines Below Threshold"
+#             body = "Hello,\n\nYour inventory is in good shape. No medicines are below the threshold."
+
+#         # Send email to user (you can change recipient dynamically if needed)
+#         await send_email("ritu.kansal456@gmail.com", subject, body)
+#     except Exception as e:
+#         logging.error(f"[MAIL ERROR] {e}")
+#     finally:
+#         db.close()
+#         logging.info("[MAIL] Database connection closed")

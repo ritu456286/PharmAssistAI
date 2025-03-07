@@ -4,7 +4,7 @@ import tempfile
 import os
 from PIL import Image
 import json
-
+from utils.api.medicine_apis import check_availabilty
 import sys
 
 # Add the "pages/ocr" directory to Python's path
@@ -82,22 +82,24 @@ def app():
         
         format_type = st.selectbox(
             "📄 Output Format",
-            ["markdown", "text", "json", "structured", "key_value"],
+            # ["markdown", "text", "json", "structured", "key_value"],
+            ["markdown", "text", "json"],
             help="Choose how you want the extracted text to be formatted"
         )
 
-         # Preset prompt selection
-        preset_prompt_option = st.selectbox(
-            "🎯 Select Custom Prompt",
-            ["None", "Medical Lab Report", "Doctor's Prescription"],
-            help="Select a predefined prompt, or leave it as 'None' to enter a custom prompt manually."
-        )
+        #  # Preset prompt selection
+        # preset_prompt_option = st.selectbox(
+        #     "🎯 Select Custom Prompt",
+        #     ["None", "Medical Lab Report", "Doctor's Prescription"],
+        #     help="Select a predefined prompt, or leave it as 'None' to enter a custom prompt manually."
+        # )
 
         # Custom prompt input
         custom_prompt_input = st.text_area(
             "📝 Custom Prompt (optional)",
-            value=PRESET_PROMPTS.get(preset_prompt_option, ""),
-            help="Enter a custom prompt to override the default. If you select a preset above, it will auto-fill here."
+            # value=PRESET_PROMPTS.get(preset_prompt_option, ""),
+            # help="Enter a custom prompt to override the default. If you select a preset above, it will auto-fill here."
+            help="Enter a custom prompt to override the default."
         )
         
         max_workers = st.slider(
@@ -136,7 +138,8 @@ def app():
         uploaded_files = st.file_uploader(
             "Drop your images here",
             type=['png', 'jpg', 'jpeg', 'tiff', 'bmp', 'pdf'],
-            accept_multiple_files=True,
+            # accept_multiple_files=True,
+            accept_multiple_files=False,
             help="Supported formats: PNG, JPG, JPEG, TIFF, BMP, PDF"
         )
 
@@ -183,68 +186,73 @@ def app():
                                 mime="text/plain"
                             )
                             ## TESTING FOR ONLY TEXT DATA
+                            
+                            ## TODO check backend check alternatives here, using GPU laptop
+
                             if st.button("🤖 Check availability of medicines"):
-                                with st.spinner("Checking..."):
-                            
-                                    get_insights_url = BASE_URL_LLM
-                                    response = requests.post(get_insights_url, json={"text": result})
-                                    insights = response.json()
+                                with st.status("Checking...", expanded=True) as status:
+                                    success = check_availabilty(result)
+
+                                    if success:
+                                        status.update(label="✅ Medicine data sent to backend", state="complete", expanded=False)
+                                        st.rerun()
+                                    else:
+                                        status.update(label="❌ Failed to send medical data", state="error", expanded=True)
                                     
-                                    st.subheader("💡 AI Insights")
-                                    st.markdown(insights.get("summary", "No insights available."))
-
-                        else:
-                            #TODO: CHeck availability in batch images case
-                            # Batch processing
-                            results = processor.process_batch(
-                                input_path=image_paths,
-                                format_type=format_type,
-                                preprocess=enable_preprocessing,
-                                custom_prompt=custom_prompt
-                            )
-                            
-                            # Display statistics
-                            st.subheader("📊 Processing Statistics")
-                            col1, col2, col3 = st.columns(3)
-                            with col1:
-                                st.metric("Total Images", results['statistics']['total'])
-                            with col2:
-                                st.metric("Successful", results['statistics']['successful'])
-                            with col3:
-                                st.metric("Failed", results['statistics']['failed'])
-
-                            # Display results
-                            st.subheader("📝 Extracted Text")
-                            for file_path, text in results['results'].items():
-                                with st.expander(f"Result: {os.path.basename(file_path)}"):
-                                    st.markdown(text)
-
-                            # Display errors if any
-                            if results['errors']:
-                                st.error("⚠️ Some files had errors:")
-                                for file_path, error in results['errors'].items():
-                                    st.warning(f"{os.path.basename(file_path)}: {error}")
-
-                            # Download all results as JSON
-                            if st.button("📥 Download All Results"):
-                                json_results = json.dumps(results, indent=2)
-                                st.download_button(
-                                    "📥 Download Results JSON",
-                                    json_results,
-                                    file_name="ocr_results.json",
-                                    mime="application/json"
-                                )
-                            
-                            ##NOT TESTED WITH BATCH IMAGES
-                            if st.button("🤖 Get Insights"):
-                                with st.spinner("Generating insights..."):
-                            
-                                    get_insights_url = BASE_URL_LLM
-                                    response = requests.post(get_insights_url, json={"text": results['results']})
-                                    insights = response.json()
                                     
-                                    st.subheader("💡 AI Insights")
-                                    st.markdown(insights.get("summary", "No insights available."))
+
+                        # else:
+                        #     #TODO: CHeck availability in batch images case
+                        #     # Batch processing
+                        #     results = processor.process_batch(
+                        #         input_path=image_paths,
+                        #         format_type=format_type,
+                        #         preprocess=enable_preprocessing,
+                        #         custom_prompt=custom_prompt
+                        #     )
+                            
+                        #     # Display statistics
+                        #     st.subheader("📊 Processing Statistics")
+                        #     col1, col2, col3 = st.columns(3)
+                        #     with col1:
+                        #         st.metric("Total Images", results['statistics']['total'])
+                        #     with col2:
+                        #         st.metric("Successful", results['statistics']['successful'])
+                        #     with col3:
+                        #         st.metric("Failed", results['statistics']['failed'])
+
+                        #     # Display results
+                        #     st.subheader("📝 Extracted Text")
+                        #     for file_path, text in results['results'].items():
+                        #         with st.expander(f"Result: {os.path.basename(file_path)}"):
+                        #             st.markdown(text)
+
+                        #     # Display errors if any
+                        #     if results['errors']:
+                        #         st.error("⚠️ Some files had errors:")
+                        #         for file_path, error in results['errors'].items():
+                        #             st.warning(f"{os.path.basename(file_path)}: {error}")
+
+                        #     # Download all results as JSON
+                        #     if st.button("📥 Download All Results"):
+                        #         json_results = json.dumps(results, indent=2)
+                        #         st.download_button(
+                        #             "📥 Download Results JSON",
+                        #             json_results,
+                        #             file_name="ocr_results.json",
+                        #             mime="application/json"
+                        #         )
+                            
+                        #     ##NOT TESTED WITH BATCH IMAGES
+                        #     if st.button("🤖 Get Insights"):
+                        #         with st.spinner("Generating insights..."):
+                            
+                        #             get_insights_url = BASE_URL_LLM
+                        #             response = requests.post(get_insights_url, json={"text": results['results']})
+                        #             insights = response.json()
+                                    
+                        #             st.subheader("💡 AI Insights")
+                        #             st.markdown(insights.get("summary", "No insights available."))
 
     with tab2:
         st.header("About Vision OCR Lab")
@@ -265,4 +273,4 @@ def app():
         """)
 
 if __name__ == "__main__":
-    main()
+    app()
