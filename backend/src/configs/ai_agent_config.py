@@ -6,9 +6,9 @@ import ast
 
 from typing_extensions import TypedDict
 
-from sqlalchemy import text, inspect
+from sqlalchemy import inspect
 
-from src.configs.db_con import engine, SessionLocal, db, initialize_db
+from src.configs.db_con import engine, db
 
 from pydantic import BaseModel, Field
 
