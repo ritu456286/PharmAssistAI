@@ -14,7 +14,6 @@ from pydantic import BaseModel, Field
 
 from langchain_groq import ChatGroq
 from langchain import hub
-from langchain_community.utilities import SQLDatabase
 from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
