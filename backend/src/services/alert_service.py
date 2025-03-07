@@ -32,9 +32,6 @@ def trigger_alert_if_needed(db: Session, medicine_id: int):
     if medicine.quantity > alert.alert_quantity and alert.status == "Active":
         logging.info(f"[ALERT] Resolving alert for {medicine.id}")
         alert_repo.resolve_alert(db, medicine_id)
-    
-    # elif medicine.quantity <= alert.alert_quantity and alert.status != "Resolved":
-    #     logging.info(f"[ALERT] Alert already active for {medicine.id}")
 
     elif medicine.quantity <= alert.alert_quantity and alert.status == "Resolved":
         logging.info(f"[ALERT] Creating alert for {medicine.id}")

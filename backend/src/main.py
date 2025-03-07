@@ -4,7 +4,6 @@ from sqlalchemy.orm import close_all_sessions
 from contextlib import asynccontextmanager
 from src.configs.db_con import initialize_db, engine
 from src.configs.log_config import configure_logging
-# from src.configs.scheduler import start_scheduler, stop_scheduler_on_shutdown
 from src.routers import medicine_routes, chat_pharma_routes, alert_routes
 
 @asynccontextmanager
@@ -12,13 +11,10 @@ async def lifespan(app: FastAPI):
     configure_logging()
     print("[STARTUP] Initializing the database...")
     initialize_db()
-    # start_scheduler()  # Start the scheduler automatically
-
     try:
         yield  # App runs here
     finally:
         print("[SHUTDOWN] Closing database connections...")
-        # stop_scheduler_on_shutdown()  
         close_all_sessions()
         engine.dispose()
         print("[SHUTDOWN] Database connections closed successfully.")
