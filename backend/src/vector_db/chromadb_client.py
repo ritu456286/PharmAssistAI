@@ -25,7 +25,7 @@ def find_similar_medicines(medicine_name: str, top_k=4):
         if not results or "documents" not in results or not results["documents"][0]:
             return []  # No alternatives found
 
-        print(f"\nRaw ChromaDB response for {medicine_name}: {results}\n")  # Debugging
+        # print(f"\nRaw ChromaDB response for {medicine_name}: {results}\n")  # Debugging
 
         # Extract document names
         retrieved_medicines = results["documents"][0]
@@ -39,7 +39,7 @@ def find_similar_medicines(medicine_name: str, top_k=4):
             if med.lower().strip() != medicine_name.lower().strip()  # Stricter check
         ]
 
-        print(f"\nFiltered alternatives for {medicine_name}: {alternatives}\n")  # Debugging
+        # print(f"\nFiltered alternatives for {medicine_name}: {alternatives}\n")  # Debugging
 
         # Limit results to top_k after filtering
         return alternatives[:top_k]

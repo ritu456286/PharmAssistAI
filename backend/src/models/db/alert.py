@@ -4,7 +4,7 @@ This file contains the ORM model for the stock alerts table.
 
 from sqlalchemy import Integer, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
-from .medicine import Base
+from .database import Base
 
 
 class StockAlert(Base):

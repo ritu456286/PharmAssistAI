@@ -7,9 +7,9 @@ load_dotenv()
 
 def generate(input_med_name: str):
     
-    api_key = os.getenv("GEMINI_API_KEY1")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY1 is not set. Please check your environment variables.")
+        raise ValueError("GEMINI_API_KEY is not set. Please check your environment variables.")
     
     client = genai.Client(
         api_key=api_key,

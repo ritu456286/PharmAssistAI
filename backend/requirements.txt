@@ -10,3 +10,10 @@ scispacy
 https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz
 chromadb
 rapidfuzz
+langchain-groq
+langchain
+langchain-core
+langchain-community
+typing-extensions
+langchainhub
+python-multipart

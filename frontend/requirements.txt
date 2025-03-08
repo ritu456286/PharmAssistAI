@@ -1,12 +1,6 @@
 streamlit
 requests
 pandas
-Pillow
-python-magic
-transformers
 streamlit
-tqdm
-opencv-python
-pdf2image
-numpy
 python-dotenv
+reportlab

@@ -7,8 +7,12 @@ def app():
     st.title("📊 Medicine Inventory Dashboard")
     st.markdown("---")
 
-    # Fetch Data
-    medicines = get_all_medicines()
+    if "skip" not in st.session_state:
+        st.session_state.skip = 0  # Start from Page 0
+    limit = 10  # Fixed page size
+
+   # Fetch Data
+    medicines = get_all_medicines(skip=st.session_state.skip, limit=limit)
     below_threshold_medicines = get_medicines_below_threshold()
 
     # ====== Key Metrics ======
@@ -20,6 +24,7 @@ def app():
         st.metric(label="Total Medicines", value=total_meds, delta=None)
     with col2:
         st.metric(label="Low Stock Medicines", value=low_stock_meds, delta="⚠️ Restock Needed" if low_stock_meds > 0 else "✅ All Good")
+
 
     # ====== Warning Section ======
     if below_threshold_medicines:
@@ -91,6 +96,19 @@ def app():
         with st.expander("🏥 **Medicine Inventory Table**", expanded=True):
             st.dataframe(medicines_df, use_container_width=True)
 
+            # ===== Pagination Buttons =====
+            col1, col2, col3 = st.columns([1, 2, 1])
+
+            with col1:
+                if st.button("⬅️ Previous", key="prev_page") and st.session_state.skip > 0:
+                    st.session_state.skip -= limit
+                    st.rerun()
+
+            with col3:
+                if len(medicines) == limit:
+                    if st.button("➡️ Next", key="next_page"):
+                        st.session_state.skip += limit
+                        st.rerun()
         
     else:
         st.warning("⚠️ No medicines found in the inventory!")

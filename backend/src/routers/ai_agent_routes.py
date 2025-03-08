@@ -25,3 +25,5 @@ async def ask_agent(query: QueryRequest):
         raise e  # Re-raise HTTPException for FastAPI to handle
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# pip install langchain-groq langchain langchain-core langchain-community sqlalchemy pydantic python-dotenv typing-extensions langchainhub

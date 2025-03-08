@@ -67,7 +67,6 @@ def update_alert(db: Session, medicine_id: int, new_threshold: int):
 
     if not alert:
         return None
-    print("HEILLOO alert", alert)
     # Update alert quantity
     alert.alert_quantity = new_threshold
 

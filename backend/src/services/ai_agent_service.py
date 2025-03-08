@@ -25,9 +25,6 @@ async def get_answer_from_agent(query: QueryRequest):
         Exception: If there is an error invoking the agent.
     """
     
-    
-    print(f"User Question: {query.question}")
-    
     try:
         result = await agent.ainvoke({"question": query.question, "attempts": 0})
         return AgentResponse(query_result=result["query_result"])

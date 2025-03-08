@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from src.configs.db_con import SessionLocal
@@ -8,62 +9,65 @@ from src.vector_db.chromadb_client import find_similar_medicines
 
 def find_alternatives(unavailable_medicines: list, db: Session) -> dict:
     """
-    Finds top 5 alternatives from ChromaDB with full medicine structure
+    Finds top 5 alternatives from ChromaDB with full medicine structure, and returns max 2 available alternatives for each medicine
     """
-    alternative_medicines = {}
+    available_alternative_medicines = []
     if unavailable_medicines:
         for med_name in unavailable_medicines:
+            count = 0
             alternatives = find_similar_medicines(med_name)  # Get top k alternatives from ChromaDB
-            available_alternatives = []
-            for alt_med_name in alternatives:
-                medicines_found_list = medicine_repo.get_medicine_by_name(db, alt_med_name["name"])
+            for alt_med in alternatives:
+                medicine_found = medicine_repo.get_medicine_by_name(db, alt_med["name"])
 
-                if medicines_found_list:
-                    for alt_med in medicines_found_list:
-                        available_alternatives.append({
-                            "name": alt_med.name,
-                            "dosage": alt_med.dosage,
-                            "quantity": alt_med.quantity,
-                            "expiry_date": alt_med.expiry_date,
-                            "price": alt_med.price
+                if medicine_found:
+                    count +=1
+                    available_alternative_medicines.append({
+                            "for_medicine": med_name,
+                            "id": medicine_found.id,
+                            "name": medicine_found.name,
+                            "dosage": medicine_found.dosage,
+                            "quantity": medicine_found.quantity,
+                            "expiry_date": medicine_found.expiry_date,
+                            "price": medicine_found.price
                         })
-                if available_alternatives:
-                    alternative_medicines[med_name] = available_alternatives[:5] 
-        return alternative_medicines
+                if count > 2:
+                    break
+        
+        return available_alternative_medicines
 
-
-def check_medicine_availability(prescription_text: str, db: Session):
-    """
-    1. Extract medicines from the prescription.
-    2. Check if they are available in SQLite3 inventory.
-    3. If unavailable, query ChromaDB for top 3 alternatives.
-    4. Only return alternatives that are in stock.
-    """
-    # medicine_data = extract_medicines_and_dosages(prescription_text)
-    medicines_list = extract_medicines(prescription_text)
-
-    if not medicines_list:
-        raise HTTPException(status_code=400, detail="No valid medicines found.")
-
+def check_medicine_availability(medicines: List[str], db: Session):
+    if not medicines:
+        raise HTTPException(status_code=400, detail="No valid medicines given.")
     available_medicines = []
     unavailable_medicines = []
-    alternative_medicines = {}
-    # Iterate medicines with zip_longest to handle missing dosages
-    from itertools import zip_longest
-
-    for med_name in medicines_list:
-        db_med_list = medicine_repo.get_medicine_by_name(db, med_name)
-        if db_med_list:
-            available_medicines.extend(db_med_list)  
+    alternative_medicines = []
+    for med_name in medicines:
+        db_med = medicine_repo.get_medicine_by_name(db, med_name)
+       
+        if db_med:
+         
+            available_medicines.append({
+                "id": db_med.id,
+                "name": db_med.name,
+                "dosage": db_med.dosage,
+                "quantity": db_med.quantity,
+                "expiry_date": db_med.expiry_date,
+                "price": db_med.price
+            })  
         else:
+          
             unavailable_medicines.append(med_name)
+
+    #Find alternatives
+    print("UNAVAILABLE: ", unavailable_medicines)
+    print("AVAILABLE: ", available_medicines)
     if unavailable_medicines:
         alternative_medicines = find_alternatives(unavailable_medicines, db)
-
+    
     return {
-        "extracted_medicines": medicines_list,
         "available": available_medicines,
         "unavailable": unavailable_medicines,
         "alternatives": alternative_medicines
     }
+
 

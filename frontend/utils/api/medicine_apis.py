@@ -1,3 +1,4 @@
+from typing import List
 import requests
 import streamlit as st
 from utils.api.api_config import MEDICINE_ROUTES as BASE_URL
@@ -26,12 +27,12 @@ def add_medicine(name: str, dosage: str, quantity: int, price: float, expiry_dat
         return False
 
 
-def get_all_medicines():
+def get_all_medicines(skip=0, limit=10):
     """
     Fetches all medicines from the backend.
     """
     try:
-        response = requests.get(BASE_URL)
+        response = requests.get(f"{BASE_URL}/?skip={skip}&limit={limit}")
         if response.status_code == 200:
             return response.json()
         else:
@@ -80,25 +81,21 @@ def update_medicine(medicine_id: int, updated_data: dict):
         st.error(f"Server Connection Error: {e}")
         return False
 
-def check_availabilty(prescription_text):
-    # TODO : test the code
-    """
-    Sends prescription text to the backend API to check medicine availability.
-    """
-    print("PRESCRIPTION TEXT RECEIVED: " + prescription_text)
+def check_availabilty(medicines: List[str]):
+
     url = f"{BASE_URL}/check-availability"  # Ensure endpoint is correct
-    payload = {"prescription_text": prescription_text}
-    print("URL:"  + url)
+    payload = {"medicines": medicines}
     try:
-        print(f"Sending prescription: {payload}")
         response = requests.post(url, json=payload)
 
-        if response.status_code == 200:
-            st.success("✅ Medicine availability checked successfully.")
-            print("Response from Backend:", response.json())
-            return True
+        if response.status_code == 200:  
+           
+            data = response.json()  # ✅ Extract JSON only here
+          
+            return data  
         else:
-            st.error(f"❌ Failed to check availability: {response.status_code} - {response.json().get('detail', 'Unknown error')}")
+            error_msg = response.json().get('detail', 'Unknown error')
+            st.error(f"❌ Failed to check availability: {response.status_code} - {error_msg}")
             return False
     except requests.exceptions.RequestException as e:
         st.error(f"🚫 Server Connection Error: {e}")
@@ -113,6 +110,6 @@ def get_medicines_below_threshold():
         else:
             return []
     except Exception as e:
-        print(f"[ERROR] Fetching below-threshold medicines: {e}")
+        st.error(f"Server Connection Error: {e}")
         return []
     

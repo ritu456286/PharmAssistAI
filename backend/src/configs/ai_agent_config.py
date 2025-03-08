@@ -102,8 +102,7 @@ Respond with only "relevant" or "not_relevant".
             ("human", human),
         ]
     )
-    llm = ChatGroq(temperature=0)
-    print("******HII*******")
+    llm = ChatGroq(temperature=0, model="mixtral-8x7b-32768")
     structured_llm = llm.with_structured_output(CheckRelevance)
     relevance_checker = check_prompt | structured_llm
     print("*****BEFORE INVOKE********")
@@ -131,7 +130,7 @@ async def convert_nl_to_sql(state: AgentState):
     )
     print(f"Type of prompt: {type(prompt)}") # Debug print for prompt type
 
-    llm = ChatGroq(temperature=0)
+    llm = ChatGroq(temperature=0, model="mixtral-8x7b-32768")
     
     structured_llm = llm.with_structured_output(ConvertToSQL)
     print(f"Type of structured_llm: {type(structured_llm)}") # Debug print for structured_llm type
@@ -265,7 +264,7 @@ Formulate a clear and understandable confirmation message in a single sentence, 
             ]
         )
 
-    llm = ChatGroq(temperature=0)
+    llm = ChatGroq(temperature=0, model="mixtral-8x7b-32768")
     human_response = generate_prompt | llm | StrOutputParser()
     answer = await human_response.ainvoke({})
     state["query_result"] = answer
@@ -287,7 +286,7 @@ async def regenerate_query(state: AgentState):
             ),
         ]
     )
-    llm = ChatGroq(temperature=0)
+    llm = ChatGroq(temperature=0, model="mixtral-8x7b-32768")
     structured_llm = llm.with_structured_output(RewrittenQuestion)
     rewriter = rewrite_prompt | structured_llm
     rewritten = await rewriter.ainvoke({})
@@ -307,7 +306,7 @@ async def generate_funny_response(state: AgentState):
             ("human", human_message),
         ]
     )
-    llm = ChatGroq(temperature=0.7)
+    llm = ChatGroq(temperature=0.7,model="mixtral-8x7b-32768")
     funny_response = funny_prompt | llm | StrOutputParser()
     message = await funny_response.ainvoke({})
     state["query_result"] = message

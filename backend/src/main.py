@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from src.configs.db_con import initialize_db, engine
 from src.configs.ai_agent_config import agent
 from src.configs.log_config import configure_logging
-from src.routers import medicine_routes, chat_pharma_routes, alert_routes, ai_agent_routes
+from src.routers import medicine_routes, chat_pharma_routes, alert_routes, ai_agent_routes, ocr_routes, invoice_routes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,6 +30,10 @@ app.include_router(medicine_routes.router, prefix="/api/medicines", tags=["Medic
 app.include_router(ai_agent_routes.router, prefix="/api/agent", tags=["Agent"])
 
 app.include_router(alert_routes.router, prefix="/api/alerts", tags=["Alerts"])
+
+app.include_router(invoice_routes.router, prefix="/api/invoice", tags=["Invoice"])
+
+app.include_router(ocr_routes.router, prefix="/api/process-image", tags=["OCR"])
 
 app.include_router(chat_pharma_routes.router, prefix="/api/chat/pharma", tags=["Chatbot"])
 

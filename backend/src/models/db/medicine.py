@@ -3,12 +3,10 @@ This file contains the ORM model for the medicine table in the database.
 '''
 
 from sqlalchemy import Integer, String, Float, Date
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
+from .database import Base
 
-
-class Base(DeclarativeBase):
-    pass
 
 
 #This is an orm model for the medicine table, and not a pydantic model

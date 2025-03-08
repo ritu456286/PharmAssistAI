@@ -53,7 +53,7 @@ def delete_medicine(db: Session, medicine_id: int):
     return med
 
 def get_medicine_by_name(db: Session, medicine_name: str):
-    return db.query(Medicine).filter(Medicine.name == medicine_name).all()
+    return db.query(Medicine).filter(Medicine.name == medicine_name).first()
 
 def get_medicine_by_name_and_dosage(db: Session, 
 medicine_name: str, dosage: str):

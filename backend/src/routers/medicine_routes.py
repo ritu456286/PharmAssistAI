@@ -5,6 +5,7 @@ from src.configs.db_con import SessionLocal
 from src.models.schema.medicine import MedicineCreate, MedicineUpdate
 from src.services.medicine_service import check_medicine_availability
 import logging
+from typing import List
 
 router = APIRouter()
 
@@ -41,20 +42,42 @@ def get_medicines_below_threshold(db: Session = Depends(get_db)):
 
 #POST /medicines/check-availability
 @router.post("/check-availability")
-def check_availability_endpoint(prescription_text: str, db: Session = Depends(get_db)):
-    return check_medicine_availability(prescription_text, db)
+def check_availability_endpoint(medicines: dict, db: Session = Depends(get_db)):
+    """
+    Check the availability of medicines in the database.
 
+    This endpoint accepts a JSON object containing a list of medicine names
+    and returns their availability status. The response includes:
+    - `available`: A list of medicines that are in stock, with details like dosage, quantity, expiry date, and price.
+    - `unavailable`: A list of medicines that are not found in the database.
+    - `alternatives`: Suggested alternative medicines for the unavailable ones.
 
-# #GET /medicines/cleanup -> manually run when hosted to clean expired or 0 quantity medicines
-# @router.get("/cleanup")
-# def trigger_cleanup():
-#     try:
-#         cleanup_expired_medicines()
-#         return {"message": "Cleanup triggered successfully"}
-#     except Exception as e:
-#             logging.error(f"[API ERROR] {e}")
-#             raise HTTPException(status_code=500, detail=str(e))
+    Parameters:
+    - medicines (dict): A JSON object containing a key `"medicines"` with a list of medicine names.
+    - db (Session): Database session dependency.
+
+    Returns:
+    - JSON object containing `available`, `unavailable`, and `alternatives` lists.
     
+    """
+    try:
+        if "medicines" not in medicines or not isinstance(medicines["medicines"], list):
+            raise HTTPException(status_code=400, detail="Invalid request format. Expected a list under 'medicines' key.")
+
+        return check_medicine_availability(medicines["medicines"], db)
+    
+    except HTTPException as http_exc:
+        raise http_exc  # Re-raise FastAPI's HTTP exception
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+
+
+# POST /medicines/check-availability
+# @router.post("/check-availability")
+# def check_availability_endpoint(prescription_text: str, db: Session = Depends(get_db)):
+#     return check_medicine_availability(prescription_text, db)
+
 
 #GET /medicines/{medicine_name}
 @router.get("/{medicine_name}")
