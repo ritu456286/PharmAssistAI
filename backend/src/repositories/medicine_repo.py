@@ -49,7 +49,7 @@ def delete_medicine(db: Session, medicine_id: int):
     if not med:
         return None
     db.delete(med)
-    db.commit()
+    db.commit() 
     return med
 
 def get_medicine_by_name(db: Session, medicine_name: str):

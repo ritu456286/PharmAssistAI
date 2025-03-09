@@ -13,7 +13,7 @@ def get_answer_from_agent(question):
         if response.status_code == 200:
             return response.json()
         else:
-            st.error(f"❌ Error: {response.status_code} - {response.json()['detail']}")
+            # st.error(f"❌ Error: {response.status_code} - {response.json()['detail']}")
             return None
 
     except requests.exceptions.RequestException as e:

@@ -19,21 +19,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langgraph.graph import StateGraph, END
 
-# langchain langchain-community langchain-core langgraph langchain-groq
-
-
-# if not os.environ.get("GROQ_API_KEY"):
-#     os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
-
 llm_api_key = os.getenv("GROQ_API_KEY")
 if(llm_api_key is None):
     os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
 
 query_prompt_template = hub.pull("langchain-ai/sql-query-system-prompt")
-
-
-# assert len(query_prompt_template.messages) == 1
-# query_prompt_template.messages[0].pretty_print()
 
 
 class AgentState(TypedDict):
@@ -77,14 +67,10 @@ def get_database_schema(engine):
                 col_type += f", Foreign Key to {fk.column.table.name}.{fk.column.name}"
             schema += f"- {col_name}: {col_type}\n"
         schema += "\n"
-    print("Retrieved database schema.")
+    print("Retrieved database schema.", schema)
     return schema
 
-
-
-
 async def check_relevance(state: AgentState):
-    
     question = state["question"]
     schema = get_database_schema(engine)
     print(f"Checking relevance of the question: {question}")
@@ -103,16 +89,50 @@ Respond with only "relevant" or "not_relevant".
         ]
     )
     llm = ChatGroq(temperature=0, model="mixtral-8x7b-32768")
-    structured_llm = llm.with_structured_output(CheckRelevance)
-    relevance_checker = check_prompt | structured_llm
+    relevance_checker = check_prompt | llm | StrOutputParser() # Simple chain: prompt -> LLM -> string parser
     print("*****BEFORE INVOKE********")
-    # print("*****HELLO********")
-    #"schema":schema, "question": question
-    relevance = await relevance_checker.ainvoke({})
+    relevance_text = await relevance_checker.ainvoke({"schema":schema, "question": question}) # Get plain text output
     print("*****AFTER INVOKE********")
-    state["relevance"] = relevance.relevance
+
+    if "relevant" in relevance_text.lower():
+        state["relevance"] = "relevant"
+    else:
+        state["relevance"] = "not_relevant"
+
     print(f"Relevance determined: {state['relevance']}")
     return state
+
+
+# async def check_relevance(state: AgentState):
+    
+#     question = state["question"]
+#     schema = get_database_schema(engine)
+#     print(f"Checking relevance of the question: {question}")
+#     system = """You are an assistant that determines whether a given question is related to the following database schema.
+
+# Schema:
+# {schema}
+
+# Respond with only "relevant" or "not_relevant".
+# """.format(schema=schema)
+#     human = f"Question: {question}"
+#     check_prompt = ChatPromptTemplate.from_messages(
+#         [
+#             ("system", system),
+#             ("human", human),
+#         ]
+#     )
+#     llm = ChatGroq(temperature=0, model="mixtral-8x7b-32768")
+#     structured_llm = llm.with_structured_output(CheckRelevance)
+#     relevance_checker = check_prompt | structured_llm
+#     print("*****BEFORE INVOKE********")
+#     # print("*****HELLO********")
+#     #"schema":schema, "question": question
+#     relevance = await relevance_checker.ainvoke({})
+#     print("*****AFTER INVOKE********")
+#     state["relevance"] = relevance.relevance
+#     print(f"Relevance determined: {state['relevance']}")
+#     return state
 
 
 async def convert_nl_to_sql(state: AgentState):

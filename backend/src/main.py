@@ -40,7 +40,7 @@ app.include_router(chat_pharma_routes.router, prefix="/api/chat/pharma", tags=["
 
 @app.get("/")
 def home():
-    return {"message": "Welcome to DiagnoPharmAI"}
+    return {"message": "Welcome to PharmAssistAI"}
 
 
 if __name__ == "__main__":

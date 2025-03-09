@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from src.repositories.invoice_repo import InvoiceRepository
 from src.models.schema.invoice import InvoiceCreate, InvoiceResponse
@@ -27,3 +28,17 @@ class InvoiceService:
         if not invoice:
             return None
         return InvoiceResponse.from_orm(invoice)
+    
+    @staticmethod
+    def get_all_invoices(db: Session) -> List[InvoiceResponse]:
+        """Retrieves all invoices."""
+        invoices = InvoiceRepository.get_all_invoices(db)
+        if not invoices:
+            return []
+        return [InvoiceResponse.from_orm(invoice) for invoice in invoices]
+    
+    @staticmethod
+    def delete_invoice(db: Session, invoice_id: int) -> bool:
+        """Deletes an invoice by ID. Returns True if deleted, False if not found."""
+        success = InvoiceRepository.delete_invoice(db, invoice_id)
+        return success

@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.configs.db_con import SessionLocal
@@ -37,3 +38,22 @@ def get_invoice(invoice_id: int, db: Session = Depends(get_db)):
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
     return invoice
+
+@router.get("/", response_model=List[InvoiceResponse])
+def get_all_invoices(db: Session = Depends(get_db)):
+    """
+    Retrieve all invoices.
+    """
+    invoices = InvoiceService.get_all_invoices(db)
+    return invoices
+     
+    
+@router.delete("/{invoice_id}", status_code=204)
+def delete_invoice(invoice_id: int, db: Session = Depends(get_db)):
+    """
+    Delete an invoice by ID.
+    """
+    deleted = InvoiceService.delete_invoice(db, invoice_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return {"message": "Invoice deleted successfully"}

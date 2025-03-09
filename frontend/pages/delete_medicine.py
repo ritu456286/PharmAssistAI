@@ -4,9 +4,8 @@ from utils.api.medicine_apis import delete_medicine
 
 def app():
     st.title("❌ Delete Medicine")
-
     medicine_id = st.number_input("Enter Medicine ID to Delete", min_value=1, step=1)
-
+    
     if st.button("Delete Medicine"):
         if medicine_id:
             with st.status(f"Deleting medicine ID {medicine_id}...", expanded=True) as status:

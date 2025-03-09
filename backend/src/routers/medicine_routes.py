@@ -73,12 +73,6 @@ def check_availability_endpoint(medicines: dict, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
 
-# POST /medicines/check-availability
-# @router.post("/check-availability")
-# def check_availability_endpoint(prescription_text: str, db: Session = Depends(get_db)):
-#     return check_medicine_availability(prescription_text, db)
-
-
 #GET /medicines/{medicine_name}
 @router.get("/{medicine_name}")
 def get_medicine_by_name(medicine_name: str, db: Session = Depends(get_db)):
@@ -100,7 +94,7 @@ def get_medicine_by_id(medicine_id: int, db: Session = Depends(get_db)):
 #PUT /medicines/{medicine_id}
 @router.patch("/{medicine_id}")
 def update_medicine(medicine_id: int, medicine: MedicineUpdate, db: Session = Depends(get_db)):
-    print(f"Received update request for medicine_id={medicine_id}: {medicine.model_dump(exclude_unset=True)}")  # Debug print
+
     med = medicine_repo.update_medicine(db, medicine_id, medicine)
     if not med:
         raise HTTPException(status_code=404, detail="Medicine not found")
@@ -112,7 +106,7 @@ def delete_medicine(medicine_id: int, db: Session = Depends(get_db)):
     med = medicine_repo.delete_medicine(db, medicine_id)
     if not med:
         raise HTTPException(status_code=404, detail="Medicine not found")
-    return med
+    return {"detail": "Medicine deleted successfully"}
 
 
 

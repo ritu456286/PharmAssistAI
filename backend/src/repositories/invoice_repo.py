@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
+from src.models.schema.medicine import MedicineUpdate
 from src.models.db.invoice import Invoice, InvoiceItem
 from src.models.db.medicine import Medicine
-
+from src.repositories.medicine_repo import update_medicine 
 
 class InvoiceRepository:
     """Handles all invoice-related database operations."""
@@ -44,6 +45,11 @@ class InvoiceRepository:
 
             db.add(invoice_item)
 
+            # Reduce the medicine stock
+            updated_medicine = MedicineUpdate(quantity=medicine.quantity - quantity)
+            update_medicine(db, medicine_id, updated_medicine)
+
+
         # Update invoice total amount
         invoice.total_amount = total_amount
         db.commit()
@@ -55,3 +61,19 @@ class InvoiceRepository:
     def get_invoice(db: Session, invoice_id: int):
         """Retrieve an invoice by ID."""
         return db.get(Invoice, invoice_id)
+
+    @staticmethod
+    def get_all_invoices(db: Session):
+        """Retrieve all invoices."""
+        return db.query(Invoice).all()
+    
+    @staticmethod
+    def delete_invoice(db: Session, invoice_id: int) -> bool:
+        """Deletes an invoice by ID and returns True if deleted, False if not found."""
+        invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
+        if not invoice:
+            return False  # Invoice not found
+
+        db.delete(invoice)
+        db.commit()
+        return True

@@ -35,8 +35,23 @@ def app():
     df = pd.DataFrame(alerts["alerts"])
     df.rename(columns={"medicine_id": "Medicine ID", "alert_quantity": "Alert Quantity", "status": "Alert Status"}, inplace=True)
 
-    # Search Box
-    search_query = st.text_input("🔍 Search by Medicine Name or Medicine ID", placeholder="Type here...", key="search", help="Search by Medicine Name or ID")
+    # ====== Search Section with Refresh Button (Aligned Properly) ======
+    st.markdown("---")
+    col_search, col_refresh = st.columns([5, 1])  # Adjust width ratio
+
+    with col_search:
+        search_query = st.text_input(
+            "🔍 Search by Medicine Name or Medicine ID",
+            placeholder="Type here...",
+            key="search",
+            help="Search by Medicine Name or ID"
+        )
+
+    with col_refresh:
+        st.write("")  # Add spacing to align button vertically
+        if st.button("🔄 Refresh", help="Click to refresh data", use_container_width=True):
+            st.rerun()  # Refresh the app
+
 
     # Filter Table
     if search_query:

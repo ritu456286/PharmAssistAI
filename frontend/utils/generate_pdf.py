@@ -46,7 +46,7 @@ def generate_invoice_pdf(invoice_data, invoice_items):
 
     # Total Amount
     pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawString(50, 520, f"Total Amount: ₹{invoice_data['total_amount']:.2f}")
+    pdf.drawString(50, 520, f"Total Amount: Rs.{invoice_data['total_amount']:.2f}")
 
     pdf.showPage()
     pdf.save()

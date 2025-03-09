@@ -48,6 +48,7 @@ def delete_medicine(medicine_id: int):
     Sends a DELETE request to remove a medicine by ID.
     """
     try:
+        print("MEDICINE ID", medicine_id)
         response = requests.delete(f"{BASE_URL}/{medicine_id}")
         if response.status_code == 200:
             return True

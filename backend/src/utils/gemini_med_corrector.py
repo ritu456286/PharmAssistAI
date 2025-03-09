@@ -1,3 +1,5 @@
+##NOT USED IN APP NOW, EARLIER USED FOR TEXT CLEANING
+
 import os
 from google import genai
 from google.genai import types

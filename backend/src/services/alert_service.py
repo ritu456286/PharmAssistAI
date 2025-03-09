@@ -1,6 +1,4 @@
 from sqlalchemy.orm import Session
-from src.models.db.alert import StockAlert
-from src.models.db.medicine import Medicine
 from src.repositories import alert_repo, medicine_repo
 import logging
 

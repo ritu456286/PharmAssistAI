@@ -28,8 +28,15 @@ def get_alerts(db: Session = Depends(get_db)):
 #PATCH /api/alerts/{alert_id}
 @router.patch("/{medicine_id}")
 def update_alert_threshold(medicine_id: int, data: ThresholdUpdate, db: Session = Depends(get_db)):
-    print("CALLING REPO___")
     alert = alert_repo.update_alert(db, medicine_id, data.new_threshold)
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
     return alert
+
+# DELETE /api/alerts/{alert_id}
+@router.delete("/{medicine_id}")
+def delete_alert(medicine_id: int, db: Session = Depends(get_db)):
+    deleted = alert_repo.delete_alert(db, medicine_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Alert not found")
+    return {"message": "Alert deleted successfully"}

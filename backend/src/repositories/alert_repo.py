@@ -8,7 +8,12 @@ def create_alert(db: Session, medicine_id: int, alert_quantity: int = DEFAULT_TH
     """
     Create new stock alert, will be active
     """
-    new_alert = StockAlert(medicine_id=medicine_id, alert_quantity=alert_quantity, status="Active")
+
+    med = db.query(Medicine).filter(Medicine.id == medicine_id).first()
+    if not med:
+        return None
+    status = "Active" if med.quantity <= alert_quantity else "Resolved"
+    new_alert = StockAlert(medicine_id=medicine_id, alert_quantity=alert_quantity, status=status)
     db.add(new_alert)
     db.commit()
     db.refresh(new_alert)
@@ -46,7 +51,6 @@ def get_all_alerts(db: Session):
         .join(Medicine, Medicine.id == StockAlert.medicine_id)
         .all()
     )
-    print("ALERTS>>>>>")
     return [{"id": alert.id, "medicine_id": alert.medicine_id, "medicine_name": alert.medicine_name, "alert_quantity": alert.alert_quantity, "status": alert.status} for alert in alerts]
 
 
@@ -83,4 +87,15 @@ def update_alert(db: Session, medicine_id: int, new_threshold: int):
 
     db.commit()
     db.refresh(alert)
+    return alert
+
+def delete_alert(db: Session, alert_id: int):
+    """
+    Delete stock alert by alert ID.
+    """
+    alert = db.query(StockAlert).filter(StockAlert.id == alert_id).first()
+    if not alert:
+        return None
+    db.delete(alert)
+    db.commit()
     return alert

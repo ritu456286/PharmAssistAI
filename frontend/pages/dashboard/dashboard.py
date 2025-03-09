@@ -1,7 +1,8 @@
+from  utils.api.alert_apis import get_all_alerts
 import streamlit as st
 import pandas as pd
-import requests
 from utils.api.medicine_apis import get_all_medicines, get_medicines_below_threshold
+import plotly.express as px
 
 def app():
     st.title("📊 Medicine Inventory Dashboard")
@@ -74,44 +75,62 @@ def app():
                     )
                 index += 1
 
-
-
-
-    # ====== Search Section ======
-    st.markdown("---")
-    search_id = st.text_input("🔍 Search by Medicine ID")
-    if search_id and not search_id.isdigit():
-        st.warning("⚠️ Please enter a valid integer ID!")
-        
-    # ====== Table Section ======
+    # ====== Table Data Preparation ======
     if medicines and isinstance(medicines, list):
         medicines_df = pd.DataFrame(medicines)
+        
         if "id" in medicines_df.columns:
             medicines_df["id"] = medicines_df["id"].astype(int)
             medicines_df = medicines_df.set_index("id")
 
-        if search_id and search_id.isdigit():
-            medicines_df = medicines_df.loc[[int(search_id)]] if int(search_id) in medicines_df.index else pd.DataFrame()
-
-        with st.expander("🏥 **Medicine Inventory Table**", expanded=True):
-            st.dataframe(medicines_df, use_container_width=True)
-
-            # ===== Pagination Buttons =====
-            col1, col2, col3 = st.columns([1, 2, 1])
-
-            with col1:
-                if st.button("⬅️ Previous", key="prev_page") and st.session_state.skip > 0:
-                    st.session_state.skip -= limit
-                    st.rerun()
-
-            with col3:
-                if len(medicines) == limit:
-                    if st.button("➡️ Next", key="next_page"):
-                        st.session_state.skip += limit
-                        st.rerun()
-        
+        # Reorder columns
+        column_order = ["name", "dosage", "quantity", "price", "expiry_date"]
+        medicines_df = medicines_df[column_order]
     else:
         st.warning("⚠️ No medicines found in the inventory!")
+        medicines_df = pd.DataFrame()  
+    
+    # ====== Search Section with Refresh Button (Aligned Properly) ======
+    st.markdown("---")
+    col_search, col_refresh = st.columns([5, 1])  # Adjust width ratio
+
+    with col_search:
+        search_query = st.text_input("🔍 Search Medicines by ID, Name, Price, Quantity, etc.")
+
+    with col_refresh:
+        st.write("") 
+        if st.button("🔄 Refresh", help="Click to refresh data", use_container_width=True):
+            st.rerun()  
+
+    if search_query:
+        # Convert all values to string for search compatibility
+        search_query = search_query.strip().lower()
+        
+        # Filter the DataFrame based on search query
+        filtered_df = medicines_df.astype(str).apply(lambda row: row.str.contains(search_query, case=False, na=False)).any(axis=1)
+        
+        medicines_df = medicines_df[filtered_df]
+        
+   # ====== Table Display ======
+    with st.expander("🏥 **Medicine Inventory Table**", expanded=True):
+        if not medicines_df.empty:
+            st.dataframe(medicines_df, use_container_width=True)
+        else:
+            st.warning("⚠️ No medicines found in the inventory!")
+
+    # ===== Pagination Buttons =====
+    col1, col2, col3 = st.columns([1, 2, 1])
+
+    with col1:
+        if st.button("⬅️ Previous", key="prev_page") and st.session_state.skip > 0:
+            st.session_state.skip -= limit
+            st.rerun()
+
+    with col3:
+        if len(medicines) == limit:
+            if st.button("➡️ Next", key="next_page"):
+                st.session_state.skip += limit
+                st.rerun()
 
     # ====== Navigation Buttons ======
     st.markdown("---")
@@ -119,13 +138,59 @@ def app():
     with nav_col1:
         if st.button("➕ Add Medicine"):
             st.switch_page("pages/add_medicine.py")
+         
     with nav_col2:
         if st.button("❌ Delete Medicine"):
             st.switch_page("pages/delete_medicine.py")
+        
     with nav_col3:
         if st.button("✏️ Update Medicine"):
             st.switch_page("pages/update_medicine.py")
+        
+    
+   # ====== 📊 Charts Section ======
+    if not medicines_df.empty:
+        st.markdown("## 📈 Inventory Insights")
+        # Fetch Alerts from Backend
+        alerts = get_all_alerts()
+
+        df_alerts = pd.DataFrame(alerts["alerts"])
+        df_alerts.rename(columns={"medicine_id": "Medicine ID", "alert_quantity": "Threshold Quantity"}, inplace=True)
+        medicines_df = medicines_df.merge(df_alerts, left_on="id", right_on="Medicine ID", how="left")
+
+        # 📊 1. Bar Chart: Medicine Stock Levels with Alert Thresholds
+        fig_stock = px.bar(medicines_df, x="name", y="quantity", 
+                        title="📦 Medicine Stock Levels vs. Alert Thresholds", 
+                        labels={"name": "Medicine Name", "quantity": "Stock Quantity"},
+                        color="quantity", color_continuous_scale="viridis")
+
+        # Add threshold lines as a scatter plot overlay
+        fig_stock.add_trace(
+            px.scatter(medicines_df, x="name", y="Threshold Quantity").data[0].update(marker=dict(color="red", size=8))
+        )
+
+        # Customize layout (tilt x-axis labels for readability)
+        fig_stock.update_layout(
+            xaxis_tickangle=-45,  # Rotate x-axis labels
+            xaxis_title="Medicine Name",
+            yaxis_title="Quantity",
+            height=500
+        )
+
+        st.plotly_chart(fig_stock, use_container_width=True)
 
 
-if __name__ == "__main__":
-    app()
+        # 🥧 3. Pie Chart: Medicine Stock Distribution
+        if medicines_df["quantity"].sum() > 0:
+            fig_pie = px.pie(medicines_df, names="name", values="quantity", 
+                            title="📊 Medicine Stock Distribution", 
+                            hole=0.4, 
+                            labels={"name": "Medicine Name", "quantity": "Quantity"},
+                            color_discrete_sequence=px.colors.qualitative.Set3)  # Colorful theme
+
+            # Customize layout (Show names & percentages on chart)
+            fig_pie.update_traces(textinfo="percent+label")
+
+         
+
+            st.plotly_chart(fig_pie, use_container_width=True)
