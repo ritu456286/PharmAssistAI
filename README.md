@@ -2,11 +2,10 @@
 
 ## 📽️ DEMO VIDEOS  
 
-🔹 **[OCR Demo](https://youtu.be/U_z6CGe6b1k)** – Watch how the OCR Scanner extracts text effortlessly!  
+🔹 **[OCR - Previous approach using Ollama](https://youtu.be/U_z6CGe6b1k)** – Watch how the OCR Scanner extracts text effortlessly!  
 
-🔹 **[Project Demo](https://youtu.be/zUKhJ-bkMR4)** – Get an overview of the project in action!  
+🔹 **[Project Demo]([https://youtu.be/zUKhJ-bkMR4](https://youtu.be/GdKADB6fNX8))** – Get an overview of the project in action!  
 
-> 🚧 **Note:** This project is still in development. More features and improvements are on the way! Stay tuned! 🚀 
 ----
 
 ## Overview  
@@ -15,16 +14,16 @@ This AI-powered assistant helps pharmacists automate prescription processing, me
 ---
 
 ## 🚀 Features  
-- **Prescription Processing** – Extracts text from handwritten prescriptions using advanced OCR and NLP models.  
+- **Prescription Processing** – Extracts text from handwritten prescriptions using LLM- Gemini-2.0-Flash-Exp, OCR technique.  
 - **Alternative Medicine Suggestions** – Uses ChromaDB for vector-based search to find similar medicines.  
 - **Herbal Remedies Recommendations** – Provides AI-powered herbal suggestions backed by verified sources like WHO, NIH, and Mayo Clinic.  
-- **Inventory Management** – Helps pharmacists track medicine availability and manage stock.  
+- **Inventory Management** – Helps pharmacists track medicine availability and manage stock using Dashboard, as well as Agentic AI.  
 - **Chatbot Integration** – Powered by Gemini 2.0 Flash for answering customer queries.  
 
 ---
 
 ## 🏗 Architecture  
- <img src="/diagrams/ggh-pharmassisitai.drawio (2).png" alt="Architecture Diagram">
+ <img src="/diagrams/Architecture-PharmAssistAI-latest.drawio.png" alt="Architecture Diagram">
 
 ---
 
@@ -39,46 +38,23 @@ This AI-powered assistant helps pharmacists automate prescription processing, me
 - Pydantic – Schema validation for data consistency.  
 
 #### **Frontend:**  
-- Streamlit – Rapid prototyping and demo interface.  
-- Future Plan: Migrate to React for better UI/UX.  
+- Streamlit – Rapid prototyping and demo interface.    
 
 #### **AI Models:**  
-- **OCR** – Llama 3.2-Vision:11B for text extraction from prescriptions.  
-- **NLP** – SpaCy’s BC5CDR model for medical text processing.  
+- **OCR** – Gemini-2.0-Flash-Exp for text extraction from prescriptions.  
+- **Agentic AI** - Groq - mixtral-8x7b-32768
 - **LLM** – Gemini-2.0-Flash for herbal remedy recommendations.  
-
 ---
 
 ## 📌 Future Enhancements  
-- **Agentic AI** – Automate CRUD operations and provide inventory insights.  
 - **OAuth Authentication** – Secure database modifications.  
-- **Lab Report Analysis** – Extract key medical insights from uploaded reports.  
-- **Scaling** – Migrate from SQLite3 to PostgreSQL for large databases.  
-
----
-
-## ⚠️ Limitations  
-- The current OCR model (Llama 3.2-Vision:11B) takes ~20 minutes per image but provides high accuracy.  
-- Requires an NVIDIA CUDA GPU for execution.  
-- Large model size: ~7-8GB for Llama, 5GB for Llava 7B.  
+- **Scaling** – Migrate from SQLite3 to PostgreSQL for large databases.
+- **Better UI Control**: Migrate to React for better UI/UX.
 
 ---
 
 ## **Prerequisites**  
 - Python 3.9+
-- Free Disk space of 7-8 GB to install llama3.2-vision:11b or 5-6 GB for Llava-7B model for OCR text extraction.
-- Nvidia CUDA GPU, to run the OCR model.
-- First install Ollama, from here: https://ollama.com/download
-- To install llama3.2-vision:11b, 
-```
-ollama pull llama3.2-vision:11b
-```
-For more information, pls visit: https://ollama.com/library/llama3.2-vision:11b
-- - To install llava:7b, 
-```
-ollama pull llava:7b
-```
-For more information, pls visit: https://ollama.com/library/llava:7b
 
 ---
 
@@ -100,16 +76,11 @@ pip install -r requirements.txt
 - Create a `.env` file in `/backend` folder with the following keys:
 ```
 GEMINI_API_KEY= <your gemini-2.0 api key>
+GROQ_API_KEY= <your groq key>
 ```
-- Create an empty folder inside /src named `db` --> /src/db. Here the Sqlite and chromaDB will be stored.
+- Create an empty folder inside /src named `db` --> /src/db. Here the Sqlite and chromaDB will be stored. ChromaDB will get seeded, and agent will get compiled on running the server.
 - Setup for backend is complete, you can run the fastapi server now, by executing the following command:
 ```
-- Seed the chroma DB with mock data for testing, later you can replace with real-world medicine data.
-```
-cd backend/src/vector_db
-python seeds.py
-```
-
 run.sh
 ```
 
@@ -126,17 +97,10 @@ pip install -r requirements.txt
 ```
 BASE_URL=<url where your fastapi backend server is running>
 ```
-- Serve the ollama model(s), run this from terminal:
-```
-ollama serve
-```
-This will serve the model on "http://localhost:11434/api/generate". You can also change the port to serve the model, but then make sure to add this variable in your   `/frontend/.env` file:
-```
-OLLAMA_URL=<your hosted url for Ollama model>
-```
+
 - Setup for frontend is complete, you can run the streamlit app now, by executing the following command:
 ```
 streamlit run main.py
 ```
 
-- Now, your frontend should be running, backend should be running as well as Ollama models are also being served.
+- Now, your frontend should be running, backend should be running. Update your inventory with your own Pharmacy database.
