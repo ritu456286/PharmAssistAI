@@ -20,6 +20,11 @@ def create_medicine(db: Session, medicine: MedicineCreate):
 def get_medicines(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Medicine).offset(skip).limit(limit).all()
 
+def get_all_medicines(db: Session):
+    return db.query(Medicine).all()
+
+def get_medicines_count(db: Session):
+    return db.query(Medicine).count()
 
 def get_medicine_by_id(db: Session, medicine_id: int):
     return db.query(Medicine).filter(Medicine.id == medicine_id).first()

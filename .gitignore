@@ -8,5 +8,6 @@ backend/src/db/chroma_db/
 backend/src/db/chromadb/
 backend/src/logs/
 Ollama_OCR/
+resources/
 # Ignore logs directory
 *.log

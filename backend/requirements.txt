@@ -6,10 +6,10 @@ fastapi
 google-genai
 google-generativeai
 spacy
-scispacy
+# scispacy ##Needed earlier for text cleaning
 https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz
 chromadb
-rapidfuzz
+# rapidfuzz ##Needed earlier for text cleaning
 langchain-groq
 langchain
 langchain-core
@@ -17,3 +17,5 @@ langchain-community
 typing-extensions
 langchainhub
 python-multipart
+pandas
+sentence-transformers

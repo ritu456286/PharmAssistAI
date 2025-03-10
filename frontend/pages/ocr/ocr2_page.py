@@ -11,7 +11,7 @@ def app():
     # Initialize session state
     if "extracted_data" not in st.session_state:
         st.session_state.extracted_data = None
-    if "medicines" not in st.session_state:
+    if "medicines" not in st.session_state or st.session_state.medicines is None:
         st.session_state.medicines = []
     if "new_med_input" not in st.session_state:
         st.session_state.new_med_input = ""
@@ -45,17 +45,18 @@ def app():
 
             col1, col2 = st.columns(2)
             with col1:
-                patient_name = st.text_input("👤 Patient's Name:", st.session_state.extracted_data.get("Patient's Name", ""))
-                clinic_name = st.text_input("🏥 Clinic Name:", st.session_state.extracted_data.get("Clinic Name", ""))
+                patient_name = st.text_input("👤 Patient's Name:", st.session_state.extracted_data.get("Patient's Name") or "N/A")
+                clinic_name = st.text_input("🏥 Clinic Name:", st.session_state.extracted_data.get("Clinic Name") or "N/A")
             with col2:
-                doctor_name = st.text_input("👨‍⚕️ Doctor's Name:", st.session_state.extracted_data.get("Doctor's Name", ""))
-                date = st.text_input("📅 Date:", st.session_state.extracted_data.get("Date", ""))
+                doctor_name = st.text_input("👨‍⚕️ Doctor's Name:", st.session_state.extracted_data.get("Doctor's Name") or "N/A")
+                date = st.text_input("📅 Date:", st.session_state.extracted_data.get("Date") or "3023-12-12")
 
         with st.container():
             st.markdown("<h4 class='section-title'>💊 Medicines Prescribed:</h4>", unsafe_allow_html=True)
-            updated_medicines = st.session_state.medicines[:] # Create a copy
+            updated_medicines = st.session_state.medicines.copy() if st.session_state.medicines else []
+ # Create a copy
 
-            for i, med in enumerate(st.session_state.medicines):
+            for i, med in enumerate(st.session_state.medicines or []): 
                 col1, col2 = st.columns([0.8, 0.2])
                 with col1:
                     updated_medicines[i] = st.text_input(f"Medicine {i+1}:", med, key=f"med_{i}")
@@ -187,14 +188,14 @@ def app():
                     total_amount = sum(item["total_price"] for item in invoice_items if item["quantity"] > 0)
 
                     invoice_data = {
-                        "patient_name": st.session_state.extracted_data.get("Patient's Name", ""),
-                        "doctor_name": st.session_state.extracted_data.get("Doctor's Name", ""),
-                        "clinic_name": st.session_state.extracted_data.get("Clinic Name", ""),
-                        "invoice_date": st.session_state.extracted_data.get("Date", ""),
+                        "patient_name": st.session_state.extracted_data.get("Patient's Name") or "N/A",
+                        "doctor_name": st.session_state.extracted_data.get("Doctor's Name") or "N/A",
+                        "clinic_name": st.session_state.extracted_data.get("Clinic Name") or "N/A",
+                        "invoice_date": st.session_state.extracted_data.get("Date") or "3024-12-12",
                         "medicines": filtered_medicines,
                         "total_amount": total_amount
                     }
-
+            
                     response = create_invoice(invoice_data)
 
                     if response:

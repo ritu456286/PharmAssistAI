@@ -1,7 +1,7 @@
 from  utils.api.alert_apis import get_all_alerts
 import streamlit as st
 import pandas as pd
-from utils.api.medicine_apis import get_all_medicines, get_medicines_below_threshold
+from utils.api.medicine_apis import get_all_medicines, get_count_medicines, get_medicines_below_threshold, get_medicines
 import plotly.express as px
 
 def app():
@@ -13,11 +13,12 @@ def app():
     limit = 10  # Fixed page size
 
    # Fetch Data
-    medicines = get_all_medicines(skip=st.session_state.skip, limit=limit)
+    medicines = get_medicines(skip=st.session_state.skip, limit=limit)
+    all_medicines = get_all_medicines()
     below_threshold_medicines = get_medicines_below_threshold()
-
+    
     # ====== Key Metrics ======
-    total_meds = len(medicines) if medicines else 0
+    total_meds =  get_count_medicines()
     low_stock_meds = len(below_threshold_medicines) if below_threshold_medicines else 0
 
     col1, col2 = st.columns(2)
@@ -102,6 +103,13 @@ def app():
         if st.button("🔄 Refresh", help="Click to refresh data", use_container_width=True):
             st.rerun()  
 
+
+    # ===== Fetch All Medicines First =====
+    if all_medicines and isinstance(all_medicines, list):
+        all_medicines_df = pd.DataFrame(all_medicines)  # Full dataset
+    else:
+        all_medicines_df = pd.DataFrame()  # Handle case where no data is available
+
     if search_query:
         # Convert all values to string for search compatibility
         search_query = search_query.strip().lower()
@@ -146,7 +154,10 @@ def app():
     with nav_col3:
         if st.button("✏️ Update Medicine"):
             st.switch_page("pages/update_medicine.py")
-        
+    
+    if all_medicines and isinstance(all_medicines, list):
+        all_medicines_df = pd.DataFrame(all_medicines)
+   
     
    # ====== 📊 Charts Section ======
     if not medicines_df.empty:

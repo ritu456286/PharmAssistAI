@@ -69,5 +69,3 @@ def check_medicine_availability(medicines: List[str], db: Session):
         "unavailable": unavailable_medicines,
         "alternatives": alternative_medicines
     }
-
-

@@ -27,7 +27,7 @@ def add_medicine(name: str, dosage: str, quantity: int, price: float, expiry_dat
         return False
 
 
-def get_all_medicines(skip=0, limit=10):
+def get_medicines(skip=0, limit=10):
     """
     Fetches all medicines from the backend.
     """
@@ -114,3 +114,24 @@ def get_medicines_below_threshold():
         st.error(f"Server Connection Error: {e}")
         return []
     
+def get_count_medicines():
+    try:
+        response = requests.get(f"{BASE_URL}/count")
+        if response.status_code == 200:
+            return response.json().get("count", 0)
+        else:
+            return 0
+    except Exception as e:
+        st.error(f"Server Connection Error: {e}")
+        return 0
+    
+def get_all_medicines():
+    try:
+        response = requests.get(f"{BASE_URL}/all")
+        if response.status_code == 200:
+            return response.json().get("medicines", [])
+        else:
+            return []
+    except Exception as e:
+        st.error(f"Server Connection Error: {e}")
+        return []

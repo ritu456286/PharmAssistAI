@@ -26,7 +26,17 @@ def create_medicine(medicine: MedicineCreate, db: Session = Depends(get_db)):
 def get_medicines(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return medicine_repo.get_medicines(db, skip, limit)
 
+@router.get("/all")
+def get_all_medicines(db: Session = Depends(get_db)):
+    return {"medicines" :  medicine_repo.get_all_medicines(db)}
 
+#GET /medicines/count
+@router.get("/count")
+def get_medicines_count(db: Session = Depends(get_db)):
+    print("HEEIII")
+    return {"count" : medicine_repo.get_medicines_count(db)}
+
+#GET /medicines/below-threshold
 @router.get("/below-threshold", summary="Get Medicines Below Threshold")
 def get_medicines_below_threshold(db: Session = Depends(get_db)):
     """
