@@ -25,14 +25,12 @@ PharmAssistAI is an AI-powered assistant designed to **automate pharmacy operati
 
 - **Prescription Processing** – Extracts text from handwritten prescriptions using **Gemini-2.0-Flash-Exp OCR**.  
 - **Alternative Medicine Suggestions** – Uses **ChromaDB** for vector-based search to suggest similar medicines.  
-- **Herbal Remedies Recommendations** – AI-powered chatbot provides natural remedy suggestions from **trusted sources** like WHO, NIH, and Mayo Clinic.  
+- **Home Remedies Recommendations** – Uses **LLM (Gemini-2.0-Flash)** AI-powered chatbot provides natural remedy suggestions from **trusted sources** like WHO, NIH, and Mayo Clinic.  
 - **Inventory Management** – Track medicine stock levels, visualize data, and get **real-time stock alerts** via dashboard.  
 - **Agentic AI for SQL** – Enables **natural language interaction** with the database, eliminating manual SQL queries.  
 - **Invoice Management** – Automatically generates, stores, and prints invoices, with options to delete outdated records.  
 - **Alert System** – Allows you to set **custom stock thresholds** and provides **low-stock alerts** based on medicine available quantity.  
 - **Data Insights & Visualization** – Real-time analytics on sales and stock trends.  
-- **Home Remedies Chatbot** – Uses **LLM (Gemini-2.0-Flash)** to suggest home remedies and cite reliable sources.  
-
 ---
 
 ## **🏗 Architecture**
