@@ -1,142 +1,165 @@
-# PharmAssistAI
+# **PharmAssistAI**
 
-## 📽️ DEMO VIDEOS  
+## 📽️ Demo Videos
 
-🔹 **[OCR Demo](https://youtu.be/U_z6CGe6b1k)** – Watch how the OCR Scanner extracts text effortlessly!  
-
-🔹 **[Project Demo](https://youtu.be/zUKhJ-bkMR4)** – Get an overview of the project in action!  
-
-> 🚧 **Note:** This project is still in development. More features and improvements are on the way! Stay tuned! 🚀 
-----
-
-## Overview  
-This AI-powered assistant helps pharmacists automate prescription processing, medicine identification, and also efficiently manage inventory. It also provides reliable alternative medicine suggestions if medicines demanded are not available in the current stock and provide herbal remedy recommendations from trusted sources, ensuring pharmacists can assist customers more efficiently while maintaining trust.  
+- **[Project Demo](https://youtu.be/GdKADB6fNX8)** – Overview of the project in action.  
+- **[OCR Testing Video](https://youtu.be/KNCIHKGJ1IQ)** – Demonstration of Gemini OCR extracting text from handwritten prescriptions.  
+- **[OCR - Previous approach using Ollama](https://youtu.be/U_z6CGe6b1k)** – Comparison of previous OCR approach with Ollama.  
 
 ---
 
-## 🚀 Features  
-- **Prescription Processing** – Extracts text from handwritten prescriptions using advanced OCR and NLP models.  
-- **Alternative Medicine Suggestions** – Uses ChromaDB for vector-based search to find similar medicines.  
-- **Herbal Remedies Recommendations** – Provides AI-powered herbal suggestions backed by verified sources like WHO, NIH, and Mayo Clinic.  
-- **Inventory Management** – Helps pharmacists track medicine availability and manage stock.  
-- **Chatbot Integration** – Powered by Gemini 2.0 Flash for answering customer queries.  
+## **Overview**
+PharmAssistAI is an AI-powered assistant designed to **automate pharmacy operations**, making them faster, more efficient, and **error-free**.  
+
+- **Prescription processing** via advanced **OCR** and **LLMs**  
+- **AI-powered medicine alternatives** using **vector search**  
+- **Automated invoice generation & management**  
+- **Quick stock alerts** based on sales.  
+- **Agentic AI** for intelligent **SQL query execution**  
+- **Home remedies chatbot** for customer engagement  
+- **Interactive dashboard** with inventory insights  
 
 ---
 
-## 🏗 Architecture  
- <img src="/diagrams/ggh-pharmassisitai.drawio (2).png" alt="Architecture Diagram">
+## **🚀 Features**
+
+- **Prescription Processing** – Extracts text from handwritten prescriptions using **Gemini-2.0-Flash-Exp OCR**.  
+- **Alternative Medicine Suggestions** – Uses **ChromaDB** for vector-based search to suggest similar medicines.  
+- **Home Remedies Recommendations** – Uses **LLM (Gemini-2.0-Flash)** AI-powered chatbot provides natural remedy suggestions from **trusted sources** like WHO, NIH, and Mayo Clinic.  
+- **Inventory Management** – Track medicine stock levels, visualize data, and get **real-time stock alerts** via dashboard.  
+- **Agentic AI for SQL** – Enables **natural language interaction** with the database, eliminating manual SQL queries.  
+- **Invoice Management** – Automatically generates, stores, and prints invoices, with options to delete outdated records.  
+- **Alert System** – Allows you to set **custom stock thresholds** and provides **low-stock alerts** based on medicine available quantity.  
+- **Data Insights & Visualization** – Real-time analytics on sales and stock trends.  
+---
+
+## **🏗 Architecture**
+![Architecture Diagram](/diagrams/Architecture-PharmAssistAI-latest.drawio.png)
 
 ---
 
-### 🔧 Technologies Used  
-#### **Backend:**  
-- FastAPI – Handles prescription processing, medicine lookup, and API integrations.  
-- OpenCV – Image enhancement techniques for better OCR accuracy.  
-- Ollama – Llama 3.2-Vision:11B for OCR (text extraction from prescriptions).  
-- ChromaDB – Vector search for alternative medicine recommendations.  
-- SQLite3 – Lightweight SQL database for inventory management.  
-- SQLAlchemy – ORM for efficient database interaction.  
-- Pydantic – Schema validation for data consistency.  
+## **🔧 Tech Stack**
 
-#### **Frontend:**  
-- Streamlit – Rapid prototyping and demo interface.  
-- Future Plan: Migrate to React for better UI/UX.  
+### **Backend:**
+- **FastAPI** – Backend server for prescription processing and API management.  
+- **OpenCV** – Image enhancement for better OCR accuracy.  
+- **Ollama** – Llama 3.2-Vision:11B for OCR (previous approach).  
+- **ChromaDB** – Vector search for alternative medicine recommendations.  
+- **SQLite3** – Lightweight SQL database for pharmacy inventory.  
+- **SQLAlchemy** – ORM for efficient database interactions.  
+- **Pydantic** – Schema validation for data consistency.  
 
-#### **AI Models:**  
-- **OCR** – Llama 3.2-Vision:11B for text extraction from prescriptions.  
-- **NLP** – SpaCy’s BC5CDR model for medical text processing.  
-- **LLM** – Gemini-2.0-Flash for herbal remedy recommendations.  
+### **Frontend:**
+- **Streamlit** – Rapid prototyping and interactive UI.  
+- **Plotly** – Data visualization for inventory trends.  
+- **Pandas** – Structuring and processing data in the frontend.  
 
----
+### **Agentic AI:**
+- **Groq [Mixtral-8x7b-32768]** – AI model for intelligent SQL query execution.  
+- **LangChain & LangGraph** – Frameworks for AI-driven automation.  
 
-## 📌 Future Enhancements  
-- **Agentic AI** – Automate CRUD operations and provide inventory insights.  
-- **OAuth Authentication** – Secure database modifications.  
-- **Lab Report Analysis** – Extract key medical insights from uploaded reports.  
-- **Scaling** – Migrate from SQLite3 to PostgreSQL for large databases.  
+### **Vector Search & Embeddings:**
+- **ChromaDB** – Vector database for retrieving semantically similar medicines.  
+- **Sentence-Transformers** – Converts medicine data into embeddings for better search.  
 
----
+### **OCR & Image Processing:**
+- **Gemini-2.0-Flash-Experimental** – OCR model for text extraction from prescriptions.  
 
-## ⚠️ Limitations  
-- The current OCR model (Llama 3.2-Vision:11B) takes ~20 minutes per image but provides high accuracy.  
-- Requires an NVIDIA CUDA GPU for execution.  
-- Large model size: ~7-8GB for Llama, 5GB for Llava 7B.  
+### **Herbal Remedies & NLP:**
+- **Gemini-2.0-Flash** – AI model for herbal remedy suggestions.  
 
 ---
 
-## **Prerequisites**  
-- Python 3.9+
-- Free Disk space of 7-8 GB to install llama3.2-vision:11b or 5-6 GB for Llava-7B model for OCR text extraction.
-- Nvidia CUDA GPU, to run the OCR model.
-- First install Ollama, from here: https://ollama.com/download
-- To install llama3.2-vision:11b, 
-```
-ollama pull llama3.2-vision:11b
-```
-For more information, pls visit: https://ollama.com/library/llama3.2-vision:11b
-- - To install llava:7b, 
-```
-ollama pull llava:7b
-```
-For more information, pls visit: https://ollama.com/library/llava:7b
+## 📌 **Future Enhancements**
+- **OAuth Authentication** – Secure user access and database modifications.  
+- **Scalability** – Migrate from SQLite3 to PostgreSQL for handling large datasets.  
+- **Enhanced UI/UX** – Migrate frontend from Streamlit to **React** for better control and usability.  
 
 ---
 
-## **Setting up the project**
-- To setup this project in your device, first clone this repository using:
-```
+## **Prerequisites**
+- Python **3.9+**  
+
+---
+
+## **🔧 Setting Up the Project**
+
+### **1️⃣ Clone the Repository**
+```sh
 git clone https://github.com/ritu456286/PharmAssistAI.git
-cd ./PharmAssistAI
-```
-1. Let's set up the Backend. Go inside backend folder.
-- Create a python virtual environment
-```
-python -m venv venv
-```
-- Install all requirements.
-```
-pip install -r requirements.txt
-```
-- Create a `.env` file in `/backend` folder with the following keys:
-```
-GEMINI_API_KEY= <your gemini-2.0 api key>
-```
-- Create an empty folder inside /src named `db` --> /src/db. Here the Sqlite and chromaDB will be stored.
-- Setup for backend is complete, you can run the fastapi server now, by executing the following command:
-```
-- Seed the chroma DB with mock data for testing, later you can replace with real-world medicine data.
-```
-cd backend/src/vector_db
-python seeds.py
+cd PharmAssistAI
 ```
 
-run.sh
+---
+
+### **2️⃣ Backend Setup**
+Navigate to the backend folder:  
+```sh
+cd backend
 ```
 
-2. Next, setup the frontend.
-- Create a python virtual environment
-```
+- Create a **Python virtual environment**  
+```sh
 python -m venv venv
 ```
-- Install all requirements.
-```
+- Activate the virtual environment  
+  - **Windows:** `venv\Scripts\activate`  
+  - **Mac/Linux:** `source venv/bin/activate`  
+
+- Install dependencies  
+```sh
 pip install -r requirements.txt
 ```
-- Create a `.env` file in `/frontend` folder with the following keys:
+
+- Create a `.env` file inside `/backend` and add:  
+```sh
+GEMINI_API_KEY= <your_gemini_api_key>
+GROQ_API_KEY= <your_groq_api_key>
 ```
-BASE_URL=<url where your fastapi backend server is running>
+
+- Create an empty `/src/db` folder where SQLite and ChromaDB will be stored.  
+
+- Start the FastAPI server  
+```sh
+sh run.sh
 ```
-- Serve the ollama model(s), run this from terminal:
+
+---
+
+### **3️⃣ Frontend Setup**
+Navigate to the frontend folder:  
+```sh
+cd frontend
 ```
-ollama serve
+
+- Create a **Python virtual environment**  
+```sh
+python -m venv venv
 ```
-This will serve the model on "http://localhost:11434/api/generate". You can also change the port to serve the model, but then make sure to add this variable in your   `/frontend/.env` file:
+- Activate the virtual environment  
+  - **Windows:** `venv\Scripts\activate`  
+  - **Mac/Linux:** `source venv/bin/activate`  
+
+- Install dependencies  
+```sh
+pip install -r requirements.txt
 ```
-OLLAMA_URL=<your hosted url for Ollama model>
+
+- Create a `.env` file inside `/frontend` and add:  
+```sh
+BASE_URL=<url_where_your_backend_server_is_running>
 ```
-- Setup for frontend is complete, you can run the streamlit app now, by executing the following command:
-```
+
+- Start the Streamlit app  
+```sh
 streamlit run main.py
 ```
 
-- Now, your frontend should be running, backend should be running as well as Ollama models are also being served.
+---
+
+### **4️⃣ Run the Application**
+- Ensure both **backend** and **frontend** servers are running.  
+- Update the inventory with your **pharmacy database**.  
+- Explore **real-time stock tracking, automated billing, AI recommendations, and more!**  
+
+---
