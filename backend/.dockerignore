@@ -1,0 +1,49 @@
+# .dockerignore
+
+# Ignore git metadata
+.git
+.gitignore
+
+# Bytecode and caches
+__pycache__/
+*.py[cod]
+*.log
+logs/
+
+# Env files (optional, depending on usage)
+.env
+
+# Local Python environment
+venv/
+.env/
+.env.bak
+*.env
+
+# Editor/project files
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+backend/src/logs/
+
+# Project resources and raw data
+Ollama_OCR/
+resources/
+src/db/
+src/logs/
+src/db/chroma_db/
+
+
+# IDEs / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from src.configs.db_con import SessionLocal
 from src.repositories import medicine_repo
-from src.utils.text_cleaning import extract_medicines
+# from src.utils.text_cleaning import extract_medicines
 from src.vector_db.chromadb_client import find_similar_medicines
 
 

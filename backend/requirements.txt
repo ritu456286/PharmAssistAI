@@ -16,6 +16,7 @@ langchain-core
 langchain-community
 typing-extensions
 langchainhub
+langgraph
 python-multipart
 pandas
 sentence-transformers

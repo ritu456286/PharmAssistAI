@@ -1,10 +1,8 @@
-
-
-# source venv/Scripts/activate
+#!/bin/bash
 
 echo "Starting FastAPI Server..."
 
-# Start the server with single process
-uvicorn src.main:app --host 127.0.0.1 --port 8000
+# Bind to all interfaces so Docker port mapping works
+uvicorn src.main:app --host 0.0.0.0 --port 8000
 
 echo "Server Stopped."
