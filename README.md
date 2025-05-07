@@ -156,6 +156,7 @@ docker-compose up --build
 git clone https://github.com/ritu456286/PharmAssistAI.git
 cd PharmAssistAI
 ```
+*NOTE* : Add the resources folder in the project, with medicines_ds.csv file, for mock medicines data.
 
 ### **2️⃣ Backend Setup**
 Navigate to the backend folder:  
